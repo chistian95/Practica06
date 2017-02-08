@@ -14,6 +14,7 @@ public class CustomersDAO implements Patron_DAO <CustomersDTO> {
 	private static final String SQL_UPDATE = "UPDATE customers SET customerName = ?, contactLastname = ?, contactFirstName = ?, phone = ?, addressLine1 = ?, addressLine2 = ?, city = ?, state = ?, postalCode = ?, country = ?, salesRepEmployeeNumber = ?, creditLimit = ? WHERE customerNumber = ?";
 	private static final String SQL_FIND = "SELECT * FROM customers WHERE customerNumber = ?";
 	private static final String SQL_FINDALL = "SELECT * FROM customers";
+	private static final String SQL_FINDEMPLOYEE = "SELECT * FROM customers WHERE salesRepEmployeeNumber = ?";
 	private ConexionSQL con = ConexionSQL.getInstance();
 	
 	@Override
@@ -127,6 +128,23 @@ public class CustomersDAO implements Patron_DAO <CustomersDTO> {
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				CustomersDTO customer = new CustomersDTO(rs.getInt("customerNumber"), rs.getString("customerName"), rs.getString("contactLastname"), rs.getString("constactFirstName"), rs.getString("phone"), rs.getString("addressLine1"), rs.getString("addressLine2"), rs.getString("city"), rs.getString("state"), rs.getString("postalCode"), rs.getString("country"), rs.getString("salesRepEmployeeNumber"), rs.getDouble("creditLimit"));
+				listaCustomers.add(customer);
+			}
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return listaCustomers;
+	}
+	
+	public ArrayList<CustomersDTO> buscarEmpleado(Object pk) {
+		ArrayList<CustomersDTO> listaCustomers = new ArrayList<CustomersDTO>();
+		try {
+			PreparedStatement ps = con.getCon().prepareStatement(SQL_FINDEMPLOYEE);
+			ps.setInt(1, (int) pk); 
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				CustomersDTO customer = new CustomersDTO(rs.getInt("customerNumber"), rs.getString("customerName"), rs.getString("contactLastname"), rs.getString("contactFirstName"), rs.getString("phone"), rs.getString("addressLine1"), rs.getString("addressLine2"), rs.getString("city"), rs.getString("state"), rs.getString("postalCode"), rs.getString("country"), rs.getString("salesRepEmployeeNumber"), rs.getDouble("creditLimit"));
 				listaCustomers.add(customer);
 			}
 			rs.close();

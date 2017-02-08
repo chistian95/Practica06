@@ -3,6 +3,8 @@ package modelo_vista;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -15,8 +17,14 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import modeloDB_DAO.CustomersDAO;
+import modeloDB_DAO.EmployeeDAO;
 import modeloDB_DAO.OfficeDAO;
+import modeloDB_DAO.PaymentsDAO;
+import modeloDB_DTO.CustomersDTO;
+import modeloDB_DTO.EmployeeDTO;
 import modeloDB_DTO.OfficeDTO;
+import modeloDB_DTO.PaymentsDTO;
 
 public class GestionOficinas extends JDialog {
 	private static final long serialVersionUID = 2327111902506128036L;
@@ -169,10 +177,16 @@ public class GestionOficinas extends JDialog {
 		contentPanel.add(lblDatosOficina);
 		
 		JButton btnVolver = new JButton("VOLVER");
+		btnVolver.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
 		btnVolver.setBounds(282, 262, 142, 23);
 		contentPanel.add(btnVolver);
 		
 		cargarDatos();
+		setVisible(true);
 	}
 	
 	private void mostrarDatos(int pos) {
@@ -186,6 +200,26 @@ public class GestionOficinas extends JDialog {
 			tfCodigoPostal.setText(oficina.getPostalCode());
 			tfEstado.setText(oficina.getState());
 			tfPais.setText(oficina.getCountry());
+			
+			EmployeeDAO empleDAO = new EmployeeDAO();
+			CustomersDAO clienteDAO = new CustomersDAO();
+			PaymentsDAO pagosDAO = new PaymentsDAO();
+			List<EmployeeDTO> empleados = empleDAO.listarTodos();
+			
+			int numEmpes = empleados.size() + 1;
+			tfEmpleados.setText(numEmpes + "");
+			
+			double recaudacion = 0.0;
+			for(EmployeeDTO empleado : empleados) {				
+				List<CustomersDTO> clientes = clienteDAO.buscarEmpleado(empleado.getEmployeeNumber());
+				for(CustomersDTO cliente : clientes) {
+					List<PaymentsDTO> pagos = pagosDAO.buscarCliente(cliente.getCustomerNumber());
+					for(PaymentsDTO pago : pagos) {
+						recaudacion += pago.getAmount();
+					}
+				}
+			}
+			tfRecaudacion.setText(recaudacion + "");
 		} catch(Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(contentPanel, "Ha ocurrido un error al cargar las oficinas", "Error!", JOptionPane.ERROR_MESSAGE);

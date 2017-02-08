@@ -60,5 +60,14 @@ public class Principal extends JFrame {
 		});
 		btnGestinDePersonal.setBounds(121, 36, 188, 23);
 		contentPane.add(btnGestinDePersonal);
+		
+		JButton btnOficinas = new JButton("OFICINAS");
+		btnOficinas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				new GestionOficinas();
+			}
+		});
+		btnOficinas.setBounds(121, 70, 188, 23);
+		contentPane.add(btnOficinas);
 	}
 }
