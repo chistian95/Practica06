@@ -142,7 +142,7 @@ public class EmployeeDAO implements Patron_DAO <EmployeeDTO> {
 		ArrayList<EmployeeDTO> listaEmples = new ArrayList<EmployeeDTO>();
 		try {
 			PreparedStatement ps = con.getCon().prepareStatement(SQL_FINDOFFICE);
-			ps.setString(1, (String) pk);
+			ps.setInt(1, (int) pk);
 			
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {

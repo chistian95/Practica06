@@ -29,7 +29,7 @@ import modeloDB_DTO.PaymentsDTO;
 public class GestionOficinas extends JDialog {
 	private static final long serialVersionUID = 2327111902506128036L;
 	private final JPanel contentPanel = new JPanel();
-	private JTextField tfOficina;
+	private JTextField tfPosicion;
 	private JTextField tfCiudad;
 	private JTextField tfTelefono;
 	private JTextField tfDireccion;
@@ -41,6 +41,7 @@ public class GestionOficinas extends JDialog {
 	private JTextField tfEmpleados;
 	private OfficeDAO officeDAO = new OfficeDAO();
 	private List<OfficeDTO> oficinas;
+	private JTextField tfOficina;
 
 	public GestionOficinas() {
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
@@ -60,11 +61,13 @@ public class GestionOficinas extends JDialog {
 		lblNOficina.setBounds(10, 36, 46, 14);
 		contentPanel.add(lblNOficina);
 		
-		tfOficina = new JTextField();
-		tfOficina.setEditable(false);
-		tfOficina.setBounds(66, 33, 25, 20);
-		contentPanel.add(tfOficina);
-		tfOficina.setColumns(10);
+		tfPosicion = new JTextField();
+		tfPosicion.setBorder(null);
+		tfPosicion.setVisible(false);
+		tfPosicion.setEditable(false);
+		tfPosicion.setBounds(179, 66, 25, 20);
+		contentPanel.add(tfPosicion);
+		tfPosicion.setColumns(10);
 		
 		JButton btnInicio = new JButton("<<");
 		btnInicio.addActionListener(new ActionListener() {
@@ -88,7 +91,7 @@ public class GestionOficinas extends JDialog {
 		btnAlante.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					int pos = Integer.parseInt(tfOficina.getText()) - 1;
+					int pos = Integer.parseInt(tfPosicion.getText());
 					pos++;
 					if(pos >= oficinas.size()) {
 						pos = 0;
@@ -106,7 +109,7 @@ public class GestionOficinas extends JDialog {
 		btnAtras.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					int pos = Integer.parseInt(tfOficina.getText()) - 1;
+					int pos = Integer.parseInt(tfPosicion.getText());
 					pos--;
 					if(pos < 0) {
 						pos = oficinas.size() - 1;
@@ -208,6 +211,11 @@ public class GestionOficinas extends JDialog {
 		panel.add(tfEmpleados);
 		
 		JButton btnVerEmpleados = new JButton("VER EMPLEADOS");
+		btnVerEmpleados.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new VistaEmpleadosOficina(Integer.parseInt(tfOficina.getText()));
+			}
+		});
 		btnVerEmpleados.setBounds(135, 130, 142, 23);
 		panel.add(btnVerEmpleados);
 		
@@ -224,6 +232,12 @@ public class GestionOficinas extends JDialog {
 		btnVolver.setBounds(282, 262, 142, 23);
 		contentPanel.add(btnVolver);
 		
+		tfOficina = new JTextField();
+		tfOficina.setEditable(false);
+		tfOficina.setColumns(10);
+		tfOficina.setBounds(66, 33, 25, 20);
+		contentPanel.add(tfOficina);
+		
 		cargarDatos();
 		setVisible(true);
 	}
@@ -231,7 +245,8 @@ public class GestionOficinas extends JDialog {
 	private void mostrarDatos(int pos) {
 		try {
 			OfficeDTO oficina = oficinas.get(pos);
-			tfOficina.setText((pos + 1) + "");
+			tfPosicion.setText(pos + "");
+			tfOficina.setText(oficina.getOfficeCode());
 			tfCiudad.setText(oficina.getCity());
 			tfTelefono.setText(oficina.getPhone());
 			tfDireccion.setText(oficina.getAddressLine1());
@@ -243,10 +258,9 @@ public class GestionOficinas extends JDialog {
 			EmployeeDAO empleDAO = new EmployeeDAO();
 			CustomersDAO clienteDAO = new CustomersDAO();
 			PaymentsDAO pagosDAO = new PaymentsDAO();
-			List<EmployeeDTO> empleados = empleDAO.listarTodos();
+			List<EmployeeDTO> empleados = empleDAO.listarPorOficina(Integer.parseInt(tfOficina.getText()));
 			
-			int numEmpes = empleados.size() + 1;
-			tfEmpleados.setText(numEmpes + "");
+			tfEmpleados.setText(empleados.size() + "");
 			
 			double recaudacion = 0.0;
 			for(EmployeeDTO empleado : empleados) {				
@@ -258,6 +272,9 @@ public class GestionOficinas extends JDialog {
 					}
 				}
 			}
+			recaudacion *= 100;
+			recaudacion = Math.round(recaudacion);
+			recaudacion /= 100;
 			tfRecaudacion.setText(recaudacion + "");
 		} catch(Exception e) {
 			e.printStackTrace();
