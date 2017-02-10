@@ -61,23 +61,62 @@ public class GestionOficinas extends JDialog {
 		contentPanel.add(lblNOficina);
 		
 		tfOficina = new JTextField();
+		tfOficina.setEditable(false);
 		tfOficina.setBounds(66, 33, 25, 20);
 		contentPanel.add(tfOficina);
 		tfOficina.setColumns(10);
 		
 		JButton btnInicio = new JButton("<<");
+		btnInicio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				mostrarDatos(0);
+			}
+		});
 		btnInicio.setBounds(154, 32, 60, 23);
 		contentPanel.add(btnInicio);
 		
 		JButton btnFin = new JButton(">>");
+		btnFin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				mostrarDatos(oficinas.size() - 1);
+			}
+		});
 		btnFin.setBounds(364, 32, 60, 23);
 		contentPanel.add(btnFin);
 		
 		JButton btnAlante = new JButton(">");
+		btnAlante.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					int pos = Integer.parseInt(tfOficina.getText()) - 1;
+					pos++;
+					if(pos >= oficinas.size()) {
+						pos = 0;
+					}
+					mostrarDatos(pos);
+				} catch(Exception ex) {
+					JOptionPane.showMessageDialog(contentPanel, "Ha ocurrido un error!", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
 		btnAlante.setBounds(294, 32, 60, 23);
 		contentPanel.add(btnAlante);
 		
 		JButton btnAtras = new JButton("<");
+		btnAtras.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					int pos = Integer.parseInt(tfOficina.getText()) - 1;
+					pos--;
+					if(pos < 0) {
+						pos = oficinas.size() - 1;
+					}
+					mostrarDatos(pos);
+				} catch(Exception ex) {
+					JOptionPane.showMessageDialog(contentPanel, "Ha ocurrido un error!", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
 		btnAtras.setBounds(224, 32, 60, 23);
 		contentPanel.add(btnAtras);
 		
@@ -192,7 +231,7 @@ public class GestionOficinas extends JDialog {
 	private void mostrarDatos(int pos) {
 		try {
 			OfficeDTO oficina = oficinas.get(pos);
-			tfOficina.setText(pos+"");
+			tfOficina.setText((pos + 1) + "");
 			tfCiudad.setText(oficina.getCity());
 			tfTelefono.setText(oficina.getPhone());
 			tfDireccion.setText(oficina.getAddressLine1());
