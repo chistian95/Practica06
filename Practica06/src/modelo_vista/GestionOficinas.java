@@ -272,10 +272,12 @@ public class GestionOficinas extends JDialog {
 					}
 				}
 			}
+			/*
 			recaudacion *= 100;
 			recaudacion = Math.round(recaudacion);
 			recaudacion /= 100;
-			tfRecaudacion.setText(recaudacion + "");
+			 */
+			tfRecaudacion.setText(String.format("%.2f", recaudacion));
 		} catch(Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(contentPanel, "Ha ocurrido un error al cargar las oficinas", "Error!", JOptionPane.ERROR_MESSAGE);
